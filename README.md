@@ -4,13 +4,14 @@ An AI-powered research assistant that searches academic sources on any topic and
 
 Built as a learning project: cloned from an open-source starter, then substantially rebuilt with a new data pipeline, a custom UI, and security hardening.
 
+> **Try it locally**: after following the setup steps below, the app runs at [http://localhost:5173](http://localhost:5173) on your own machine. (This link only works once you have the servers running locally — it won't load from someone else's computer.)
+
 ## Features
 
 - **Search any topic** and pull up to 25 relevant academic sources
 - **AI-generated summaries** — insights, trends, applications, and a "why it matters" breakdown per source
 - **Search history** — every report is saved locally and can be revisited anytime
 - **Resilient search pipeline** — tries Semantic Scholar first, automatically falls back to CrossRef if rate-limited
-- **Custom UI** — a cream-and-periwinkle "sticker" aesthetic with hand-marker headings and a pixel display font
 
 ## Tech stack
 
