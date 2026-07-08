@@ -1,95 +1,107 @@
-AI Research Agent
+# Research Agent
 
-A full-stack AI-powered research assistant that automatically finds, analyzes, and summarizes the most relevant sources for any topic.
+An AI-powered research assistant that searches academic sources on any topic and generates a structured summary — key insights, trends, and real-world applications — with a saved history of past reports.
 
-Features
-Search any topic (AI, finance, science, etc.)
-Returns top 5 strongest sources
-AI-generated analysis for each source
-Key insights, trends, and applications
-Saved reports dashboard
-Daily automated research (scheduler)
-Clean modern UI (React + Tailwind)
-How It Works
-User inputs a topic
-Backend queries search engine for recent results
-Top sources are selected and structured
-OpenAI analyzes and synthesizes:
-Source breakdown
-Trends
-Insights
-Results are displayed in UI and saved to database
-Tech Stack
-Frontend
-React (Vite)
-TailwindCSS
-Axios
-Backend
-FastAPI
-OpenAI API
-APScheduler
-SQLite
- Setup Instructions
-1. Clone Repo
-git clone https://github.com/yourusername/research-agent.git
-cd research-agent
-2. Backend Setup
+Built as a learning project: cloned from an open-source starter, then substantially rebuilt with a new data pipeline, a custom UI, and security hardening.
+
+## Features
+
+- **Search any topic** and pull up to 25 relevant academic sources
+- **AI-generated summaries** — insights, trends, applications, and a "why it matters" breakdown per source
+- **Search history** — every report is saved locally and can be revisited anytime
+- **Resilient search pipeline** — tries Semantic Scholar first, automatically falls back to CrossRef if rate-limited
+- **Custom UI** — a cream-and-periwinkle "sticker" aesthetic with hand-marker headings and a pixel display font
+
+## Tech stack
+
+**Backend**
+- FastAPI (Python)
+- [Groq](https://groq.com) API (`llama-3.3-70b-versatile`) for summarization — OpenAI-compatible endpoint
+- [Semantic Scholar API](https://api.semanticscholar.org) and [CrossRef API](https://api.crossref.org) for source search
+- SQLite (via SQLAlchemy) for saved report history
+- APScheduler for background scheduling
+
+**Frontend**
+- React + Vite
+- Tailwind CSS
+- Custom fonts: Fredoka, Permanent Marker, Geist Pixel
+
+**Security**
+- Restricted CORS (no wildcard origins)
+- Per-IP rate limiting (10 requests/minute)
+- Input length validation
+- Server-side error logging with no internal detail leakage to the client
+
+## Getting started
+
+### Prerequisites
+- Python 3.9+
+- Node.js 18+
+- A free [Groq API key](https://console.groq.com/keys)
+
+### Backend setup
+
+```bash
 cd backend
-
 python3 -m venv venv
 source venv/bin/activate
-
 pip install -r requirements.txt
+```
 
-Create .env:
+Create a `.env` file inside `backend/`:
+```
+OPENAI_API_KEY=your_groq_api_key_here
+```
 
-OPENAI_API_KEY=your_key_here
+(The variable is still named `OPENAI_API_KEY` since the code uses the OpenAI-compatible client pointed at Groq's endpoint.)
 
-Run server:
+Run the backend:
+```bash
+uvicorn main:app --reload --reload-exclude "*.db"
+```
 
-uvicorn main:app --reload
+Backend runs at `http://localhost:8000`.
 
-Backend runs on:
+### Frontend setup
 
-http://localhost:8000
-3. Frontend Setup
+```bash
 cd frontend
-
 npm install
 npm run dev
+```
 
-Frontend runs on:
+Frontend runs at `http://localhost:5173`.
 
-http://localhost:5173
- API Endpoints
-Run Agent
-GET /run/{topic}
-Get Saved Reports
-GET /reports
- Example
+### Usage
 
-Input:
+Open `http://localhost:5173` in your browser, enter any research topic, and hit **Go**. Past searches are saved automatically under the **History** tab.
 
-AI agents 2025
+## Project structure
 
-Output:
+```
+research_agent/
+├── backend/
+│   ├── main.py                # FastAPI app, routes, rate limiting, validation
+│   ├── agent/
+│   │   ├── scraper.py         # Semantic Scholar + CrossRef search
+│   │   ├── summarizer.py      # Groq LLM summarization
+│   │   └── scheduler.py       # background job scheduling
+│   ├── db/
+│   │   ├── database.py        # SQLAlchemy engine/session
+│   │   └── models.py          # Report model
+│   └── requirements.txt
+└── frontend/
+    ├── src/
+    │   ├── App.jsx             # main UI
+    │   └── index.css           # global styles
+    ├── index.html
+    └── tailwind.config.js
+```
 
-Top sources with explanations
-Key insights
-Trends
-Applications
- Future Improvements
-Source ranking algorithm
-Real-time notifications
-Cloud deployment (AWS)
-User authentication
-Trend tracking dashboard
- Author
+## Notes
 
-Shaquille Taj
-Queens College – Computer Science
-Full-stack + AI Developer
+This project runs entirely locally and is intended for personal/educational use. It has no authentication layer, so it should not be exposed to the public internet as-is (e.g. via `--host 0.0.0.0`) without adding proper auth first.
 
- If you like this project
+## Credits
 
-Give it a star and feel free to fork!
+Originally based on [ShaquilleTaj/ai-research-agent](https://github.com/ShaquilleTaj/ai-research-agent), substantially modified and redesigned.
