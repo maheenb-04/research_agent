@@ -16,6 +16,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState("search");
   const [loadingLine, setLoadingLine] = useState(LOADING_LINES[0]);
+  const [statusMessage, setStatusMessage] = useState(null);
 
   const loadHistory = async () => {
     try {
@@ -45,13 +46,25 @@ export default function App() {
 
     setLoading(true);
     setData(null);
+    setStatusMessage(null);
 
     try {
       const res = await axios.get("http://localhost:8000/run/" + encodeURIComponent(topic));
-      setData(res.data.data);
+
+      if (res.data.error) {
+        setStatusMessage(res.data.error);
+      } else if (res.data.message) {
+        setStatusMessage(res.data.message);
+      } else {
+        setData(res.data.data);
+      }
+
       loadHistory();
     } catch (err) {
-      console.error(err);
+      const detail = err.response && err.response.data && err.response.data.detail;
+      setStatusMessage(
+        detail || "Couldn't reach the server. Make sure the backend is running and try again."
+      );
     }
 
     setLoading(false);
@@ -116,6 +129,12 @@ export default function App() {
               <div className="flex flex-col items-center gap-4 py-10">
                 <div className="w-12 h-12 rounded-full border-4 border-ink/10 border-t-periwinkle animate-spin" />
                 <p className="font-display text-muted">{loadingLine}</p>
+              </div>
+            )}
+
+            {!loading && statusMessage && (
+              <div className="sticker-card p-5 max-w-2xl mx-auto text-center">
+                <p className="font-display font-semibold">{statusMessage}</p>
               </div>
             )}
 

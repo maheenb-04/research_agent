@@ -36,7 +36,11 @@ Base.metadata.create_all(bind=engine)
 start_scheduler()
 
 # --- simple in-memory rate limiter ---
-# limits each client IP to RATE_LIMIT requests per RATE_WINDOW seconds
+# Limits each client IP to RATE_LIMIT requests per RATE_WINDOW seconds.
+# Note: this state lives in process memory only. It resets on every server
+# restart and would NOT work correctly across multiple worker processes.
+# Fine for local/single-process use; a production deployment with multiple
+# workers would need a shared store (e.g. Redis) instead.
 RATE_LIMIT = 10
 RATE_WINDOW = 60
 request_log = defaultdict(deque)
@@ -115,7 +119,7 @@ def run_agent(topic: str, request: Request):
 
     except HTTPException:
         raise
-    except Exception as e:
+    except Exception:
         # log full details server-side only - never leak internals to the client
         logger.exception("run_agent failed for topic=%r", topic)
         return {

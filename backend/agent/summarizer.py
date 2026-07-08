@@ -3,7 +3,7 @@ import os
 import json
 
 client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
+    api_key=os.getenv("GROQ_API_KEY"),
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -51,6 +51,7 @@ Return JSON ONLY in this format:
 
     content = res.choices[0].message.content.strip()
 
+    # Groq models sometimes wrap JSON in ```json ... ``` fences - strip if present
     if content.startswith("```"):
         content = content.split("```")[1]
         if content.startswith("json"):
