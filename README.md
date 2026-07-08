@@ -2,16 +2,14 @@
 
 An AI-powered research assistant that searches academic sources on any topic and generates a structured summary — key insights, trends, and real-world applications — with a saved history of past reports.
 
-Built as a learning project: cloned from an open-source starter, then substantially rebuilt with a new data pipeline, a custom UI, and security hardening.
-
-> **Try it locally**: after following the setup steps below, the app runs at [http://localhost:5173](http://localhost:5173) on your own machine. (This link only works once you have the servers running locally — it won't load from someone else's computer.)
+Built as a learning project: cloned from an open-source starter, then rebuilt with a new data pipeline, a custom UI, and security hardening.
 
 ## Features
 
 - **Search any topic** and pull up to 25 relevant academic sources
 - **AI-generated summaries** — insights, trends, applications, and a "why it matters" breakdown per source
 - **Search history** — every report is saved locally and can be revisited anytime
-- **Resilient search pipeline** — tries Semantic Scholar first, automatically falls back to CrossRef if rate-limited
+- **RAG search pipeline** — tries Semantic Scholar first, automatically falls back to CrossRef if rate-limited
 
 ## Tech stack
 
@@ -28,7 +26,7 @@ Built as a learning project: cloned from an open-source starter, then substantia
 - Custom fonts: Fredoka, Permanent Marker, Geist Pixel
 
 **Security**
-- Restricted CORS (no wildcard origins)
+- Restricted CORS
 - Per-IP rate limiting (10 requests/minute)
 - Input length validation
 - Server-side error logging with no internal detail leakage to the client
@@ -51,10 +49,8 @@ pip install -r requirements.txt
 
 Create a `.env` file inside `backend/`:
 ```
-OPENAI_API_KEY=your_groq_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
 ```
-
-(The variable is still named `OPENAI_API_KEY` since the code uses the OpenAI-compatible client pointed at Groq's endpoint.)
 
 Run the backend:
 ```bash
@@ -73,7 +69,7 @@ npm run dev
 
 Frontend runs at `http://localhost:5173`.
 
-### Usage
+### How to Use
 
 Open `http://localhost:5173` in your browser, enter any research topic, and hit **Go**. Past searches are saved automatically under the **History** tab.
 
@@ -99,10 +95,6 @@ research_agent/
     └── tailwind.config.js
 ```
 
-## Notes
-
-This project runs entirely locally and is intended for personal/educational use. It has no authentication layer, so it should not be exposed to the public internet as-is (e.g. via `--host 0.0.0.0`) without adding proper auth first.
-
 ## Credits
 
-Originally based on [ShaquilleTaj/ai-research-agent](https://github.com/ShaquilleTaj/ai-research-agent), substantially modified and redesigned.
+Originally based on [ShaquilleTaj/ai-research-agent](https://github.com/ShaquilleTaj/ai-research-agent), modified and redesigned.
