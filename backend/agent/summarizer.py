@@ -2,16 +2,19 @@ from openai import OpenAI
 import os
 import json
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 def summarize(topic, sources):
     formatted = "\n\n".join([
-        f"{i+1}. {s['title']}\n{s['link']}"
+        f"{i+1}. {s['title']}\n{s['link']}\nAbstract: {s.get('abstract') or 'N/A'}"
         for i, s in enumerate(sources)
     ])
 
     res = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="llama-3.3-70b-versatile",
         temperature=0.6,
         messages=[
             {
@@ -46,4 +49,12 @@ Return JSON ONLY in this format:
         ]
     )
 
-    return json.loads(res.choices[0].message.content)
+    content = res.choices[0].message.content.strip()
+
+    if content.startswith("```"):
+        content = content.split("```")[1]
+        if content.startswith("json"):
+            content = content[4:]
+        content = content.strip()
+
+    return json.loads(content)

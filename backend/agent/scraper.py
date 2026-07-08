@@ -6,24 +6,91 @@ HEADERS = {
 
 def search(topic):
     import requests
-    from bs4 import BeautifulSoup
+    import time
+    import re
 
-    url = "https://html.duckduckgo.com/html/"
-    headers = {"User-Agent": "Mozilla/5.0"}
+    def try_semantic_scholar():
+        url = "https://api.semanticscholar.org/graph/v1/paper/search"
+        params = {
+            "query": topic,
+            "limit": 25,
+            "fields": "title,abstract,url,year,authors"
+        }
+        headers = {"User-Agent": "Mozilla/5.0"}
 
-    res = requests.post(url, data={"q": topic}, headers=headers)
-    soup = BeautifulSoup(res.text, "html.parser")
+        for attempt in range(2):
+            res = requests.get(url, params=params, headers=headers, timeout=10)
+            if res.status_code == 429:
+                time.sleep(2 ** attempt)
+                continue
+            res.raise_for_status()
+            data = res.json()
 
-    results = []
+            results = []
+            for paper in data.get("data", []):
+                title = paper.get("title") or "Untitled"
+                link = paper.get("url") or ""
+                year = paper.get("year")
+                abstract = paper.get("abstract") or ""
 
-    for r in soup.find_all("a", class_="result__a"):
-        title = r.get_text()
-        link = r.get("href")
+                entry = {
+                    "title": f"{title} ({year})" if year else title,
+                    "link": link,
+                    "abstract": abstract
+                }
+                if year and year >= 2025:
+                    results.insert(0, entry)
+                else:
+                    results.append(entry)
+            return results[:25]
+        return None  # still rate-limited after retries
 
-        # 🔥 prioritize recent content
-        if any(x in title.lower() for x in ["2025", "2026", "latest", "new", "breakthrough"]):
-            results.insert(0, {"title": title, "link": link})
-        else:
-            results.append({"title": title, "link": link})
+    def try_crossref():
+        url = "https://api.crossref.org/works"
+        params = {
+            "query": topic,
+            "rows": 25,
+            "mailto": "research-agent@example.com"
+        }
+        headers = {"User-Agent": "Mozilla/5.0 (mailto:research-agent@example.com)"}
 
-    return results[:5]
+        res = requests.get(url, params=params, headers=headers, timeout=10)
+        res.raise_for_status()
+        data = res.json()
+
+        results = []
+        for item in data.get("message", {}).get("items", []):
+            title_list = item.get("title") or []
+            title = title_list[0] if title_list else "Untitled"
+            link = item.get("URL") or ""
+
+            year = None
+            date_parts = item.get("published", {}).get("date-parts", [[None]])
+            if date_parts and date_parts[0]:
+                year = date_parts[0][0]
+
+            abstract_raw = item.get("abstract") or ""
+            abstract = re.sub(r"<[^>]+>", "", abstract_raw).strip()
+
+            entry = {
+                "title": f"{title} ({year})" if year else title,
+                "link": link,
+                "abstract": abstract
+            }
+            if year and year >= 2025:
+                results.insert(0, entry)
+            else:
+                results.append(entry)
+        return results[:25]
+
+    try:
+        results = try_semantic_scholar()
+        if results:
+            return results
+    except Exception:
+        pass
+
+    try:
+        return try_crossref()
+    except Exception:
+        return []
