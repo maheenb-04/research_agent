@@ -4,17 +4,18 @@ export default {
     theme: {
       extend: {
         colors: {
-          cream: "#FAF3E7",
-          ink: "#1A1A1A",
-          periwinkle: "#8EA6FF",
-          periwinkleLight: "#EDF1FF",
-          muted: "#6b6459",
-          placeholder: "#b0a99c",
+          cream: "#FFF2C6",
+          creamLight: "#FFF8DE",
+          ink: "#22201A",
+          blue: "#8CA9FF",
+          blueSoft: "#AAC4F5",
+          blueDark: "#2A4A9E",
+          muted: "#6b6455",
+          placeholder: "#b3ab96",
         },
         fontFamily: {
-          display: ["Fredoka", "sans-serif"],
-          marker: ["Permanent Marker", "cursive"],
-          body: ["Geist Pixel", "sans-serif"],
+          display: ["Unbounded", "sans-serif"],
+          body: ["Manrope", "sans-serif"],
         },
       },
     },

@@ -7,35 +7,63 @@ html, body, #root {
 }
 
 body {
-  font-family: 'Geist Pixel', sans-serif;
-  background: #FAF3E7;
-  color: #1A1A1A;
+  font-family: 'DM Sans', sans-serif;
+  background: #FFE9A6;
+  color: #22201A;
   min-height: 100vh;
 }
 
-.sticker-card {
-  background: white;
-  border: 2px solid #1A1A1A;
-  border-radius: 16px;
-  box-shadow: 4px 4px 0 #1A1A1A;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-.sticker-card:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 #1A1A1A;
+.box-card {
+  background: #FFF2C6;
+  border: 2px solid #C9A63E;
+  border-radius: 14px;
 }
 
-.sticker-pill {
-  background: white;
-  border: 2.5px solid #1A1A1A;
+.box-pill {
+  background: #FFF2C6;
+  border: 2px solid #C9A63E;
   border-radius: 999px;
-  box-shadow: 4px 4px 0 #1A1A1A;
 }
 
-.marker-heading {
-  font-family: 'Permanent Marker', cursive;
+.tag-icon {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #2A4A9E;
+  opacity: 0.6;
+  margin-bottom: 8px;
+  font-weight: 700;
 }
 
-.stamp {
-  border-style: dashed !important;
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 0.9s step-end infinite;
+}
+
+.vintage-computer {
+  position: fixed;
+  top: 8%;
+  right: 4%;
+  width: 220px;
+  opacity: 0.16;
+  z-index: 0;
+  animation: floatComputer 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes floatComputer {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-18px) rotate(2deg); }
+}
+@media (max-width: 640px) {
+  .vintage-computer { display: none; }
+}
+
+input:focus-visible, button:focus-visible {
+  outline: 2.5px solid #22201A;
+  outline-offset: 2px;
 }

@@ -6,3 +6,4 @@ openai==2.44.0
 sqlalchemy==2.0.51
 apscheduler==3.11.3
 python-dotenv==1.2.2
+pydantic==2.13.4
